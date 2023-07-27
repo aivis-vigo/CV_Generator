@@ -1,61 +1,10 @@
 "use client";
 import React, { useRef, useState } from 'react';
-import ReactPDF, { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer';
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-import ReactDOM from 'react-dom';
-import { PDFViewer } from '@react-pdf/renderer';
 import useFormInput from './input';
+import { PDFViewer } from '@react-pdf/renderer';
+import CV from './pdf';
 
-const styles = StyleSheet.create({
-  page: { backgroundColor: 'tomato' },
-  section: { color: 'white', textAlign: 'center', margin: 30 }
-});
-
-const CV = () => (
-  <Document>
-    <Page size="A4" style={styles.page}>
-      <View style={styles.section}>
-        <Text>Section #1</Text>
-      </View>
-    </Page>
-  </Document>
-);
-
-const App = () => (
-  <PDFViewer>
-    <CV />
-  </PDFViewer>
-);
-
-function GeneratePDF() {
-  const handleDownloadPDF = () => {
-    const input = document.getElementById('content');
-
-    const pdfWidth = 210;
-    const pdfHeight = 297;
-
-    html2canvas(input as HTMLInputElement, { scale: 5 }).then((canvas) => {
-      const imgData = canvas.toDataURL('image/png');
-      const pdf = new jsPDF('p', 'mm', 'a4');
-
-      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-      pdf.save('cv.pdf');
-    });
-  };
-
-  return (
-    <main>
-      <div id="content">
-        <PersonalDataSe />
-      </div>
-
-      <button onClick={handleDownloadPDF}>Download PDF</button>
-    </main>
-  )
-}
-
-function PersonalDataSe() {
+function PersonData() {
   const name = useFormInput('');
   const objective = useFormInput('');
   const email = useFormInput('');
@@ -104,7 +53,6 @@ function PersonalDataSe() {
 
       <div className="w-full">
         <div className="w-1/2 p-8 dark:text-white">
-          <div>Personal Data</div>
           <p>{name.value}</p>
           <p>{objective.value}</p>
           <p>{email.value}</p>
@@ -117,4 +65,52 @@ function PersonalDataSe() {
   );
 }
 
-export default GeneratePDF;
+const App = () => {
+  const [formData, setPersonData] = useState({})
+
+  return (
+      <PDFViewer className="w-1/2 h-screen">
+          <CV person={formData} />
+      </PDFViewer>
+  )
+};
+
+export default function HomePage() {
+  return (
+    <main>
+      <div className="flex">
+        <PersonData />
+        <App />
+      </div>
+    </main>
+  )
+}
+
+{/*
+function GeneratePDF() {
+  const handleDownloadPDF = () => {
+    const input = document.getElementById('content');
+
+    const pdfWidth = 210;
+    const pdfHeight = 297;
+
+    html2canvas(input as HTMLInputElement, { scale: 5 }).then((canvas) => {
+      const imgData = canvas.toDataURL('image/png');
+      const pdf = new jsPDF('p', 'mm', 'a4');
+
+      pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+      pdf.save('cv.pdf');
+    });
+  };
+
+  return (
+    <main>
+      <div id="content">
+        <PersonData />
+      </div>
+
+      <button onClick={handleDownloadPDF}>Download PDF</button>
+    </main>
+  )
+}
+*/}
